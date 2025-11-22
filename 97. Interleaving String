@@ -1,0 +1,61 @@
+Recursion :-
+
+class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if(s1.length() + s2.length() != s3.length())
+            return false;
+        return isInterleaveHelper(s1, s2, s3, 0, 0, 0);
+    }
+    private boolean isInterleaveHelper(String s1, String s2, String s3, int p1, int p2, int p3){
+        if(p1 >= s1.length() && p2 >= s2.length())
+            return true;
+        char c = s3.charAt(p3);
+        if(p1 < s1.length() && c == s1.charAt(p1)){
+            if(isInterleaveHelper(s1, s2, s3, p1+1, p2, p3+1))
+                return true;
+        }
+        if(p2 < s2.length() && c == s2.charAt(p2)){
+            if(isInterleaveHelper(s1, s2, s3, p1, p2+1, p3+1))
+            return true;
+        }
+        return false;
+    }
+}
+
+Time : O(2^(m+n))  -> max recursion will go till the height of s3 and for every character of S3 there can be 2 choices in S1 or S2.
+Space : O(m + n)
+
+Memoized :
+
+class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if(s1.length() + s2.length() != s3.length())
+            return false;
+        Map<String, Boolean> memo = new HashMap<>();
+        return isInterleaveHelper(s1, s2, s3, 0, 0, 0, memo);
+    }
+    private boolean isInterleaveHelper(String s1, String s2, String s3, int p1, int p2, int p3, Map<String, Boolean> memo){
+        boolean isP1toP2Interleaving = false, isP2toP1Interleaving = false;
+        if(p1 >= s1.length() && p2 >= s2.length())
+            return true;
+        if(memo.containsKey(p1+"*"+p2+"*"+p3))
+            return memo.get(p1+"*"+p2+"*"+p3);
+        char c = s3.charAt(p3);
+        if(p1 < s1.length() && c == s1.charAt(p1)){
+            isP1toP2Interleaving = isInterleaveHelper(s1, s2, s3, p1+1, p2, p3+1, memo);
+        }
+        if(p2 < s2.length() && c == s2.charAt(p2)){
+            isP2toP1Interleaving = isInterleaveHelper(s1, s2, s3, p1, p2+1, p3+1, memo);
+        }
+        if(isP1toP2Interleaving || isP2toP1Interleaving){
+            memo.put(p1+"*"+p2+"*"+p3, true);
+            return true;
+        }
+        memo.put(p1+"*"+p2+"*"+p3, false);
+        return false;
+    }
+}
+
+Time : O(m * n)
+Space : O(m * n)
+
