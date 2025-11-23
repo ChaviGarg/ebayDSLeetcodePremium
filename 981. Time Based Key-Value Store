@@ -1,0 +1,50 @@
+class TimeMap {
+
+    Map<String, List<Integer>> keyTimestampsMap;
+    Map<String, String> keyValueMap;
+
+    public TimeMap() {
+        keyTimestampsMap = new HashMap<>();
+        keyValueMap = new HashMap<>();
+    }
+    
+    public void set(String key, String value, int timestamp) {
+        keyValueMap.put(key+"*"+timestamp, value);
+        keyTimestampsMap.computeIfAbsent(key, k -> new ArrayList<>());
+        keyTimestampsMap.get(key).add(timestamp);
+    }
+    
+    public String get(String key, int timestamp) {
+        if(! keyTimestampsMap.containsKey(key))
+            return "";
+        List<Integer> timestamps = keyTimestampsMap.get(key);
+        int timestamp_prev = binarySearch(timestamps, timestamp);
+        return timestamp_prev != -1 ? keyValueMap.get(key + "*"+timestamp_prev) : "";
+    }
+
+    public int binarySearch(List<Integer> timestamps, int timestamp){
+        int left = 0, right = timestamps.size()-1;
+        int timestamp_prev = -1;
+        while(left <= right){
+            int mid = left + (right - left)/2;
+            int midVal = timestamps.get(mid);
+            if(midVal == timestamp){
+                timestamp_prev = midVal;
+            }
+            if(midVal < timestamp){
+                timestamp_prev = midVal;
+                left = mid+1;
+            }else{
+                right = mid-1;
+            }
+        }
+        return timestamp_prev;
+    }
+}
+
+/**
+ * Your TimeMap object will be instantiated and called as such:
+ * TimeMap obj = new TimeMap();
+ * obj.set(key,value,timestamp);
+ * String param_2 = obj.get(key,timestamp);
+ */
