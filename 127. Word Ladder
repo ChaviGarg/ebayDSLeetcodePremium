@@ -1,0 +1,62 @@
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> set = new HashSet<>(wordList);
+        if(! set.contains(endWord))
+            return 0;
+        set.add(beginWord);
+
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(beginWord);
+
+        int level = 0;
+
+        while(! queue.isEmpty()){
+            int size = queue.size();
+            for(int i=0; i < size; i++){
+                String curr = queue.poll();
+                if(curr.equals(endWord))
+                   return level+1;
+                for(String child : getNeighbors(curr, set)){
+                   queue.offer(child);
+                }
+            }
+            level++;
+        }
+        return 0;
+    }
+    private List<String> getNeighbors(String curr, Set<String> set){
+        List<String> neighbors = new ArrayList<>();
+        for(int i=0; i < curr.length(); i++){    // O(L)
+            char arr[] = curr.toCharArray();     // O(L)
+            for(char ch='a'; ch <= 'z'; ch++){
+                arr[i] = ch;
+                String word = String.valueOf(arr);    // O(L)
+                if(set.remove(word) && ! word.equals(curr)){
+                    neighbors.add(word);
+                }
+            }
+        }
+        System.out.println("word " + curr + "  neigbors " + neighbors.toString());
+        return neighbors;
+    }
+}
+
+Time : O(n*L2)
+for every word, it is taking L*L time to get neighbors.
+O(n * L * O(L + 26 * L))
+O(n * L2)
+
+Space : O(n)
+
+We don’t count memory that is created and destroyed immediately inside each iteration.
+The neighbors list is temporary, exists only inside the function call, and is garbage-collected after returning.
+So we only count the peak memory usage at any moment, not the total over the whole run.
+
+For each word in BFS:
+You create a new temporary list of size at most 26 * L
+You add a bunch of neighbor strings
+You return the list → BFS iterates over it
+After BFS processes it, that list becomes unreachable → garbage collected
+So at any moment:
+Only one neighbors list exists
+Not one per word simultaneously
