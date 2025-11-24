@@ -1,0 +1,32 @@
+Youtube link for reference : https://www.youtube.com/watch?v=hUe0cUKV-YY&t=738s
+
+class Solution {
+    public boolean makesquare(int[] matchsticks) {
+        if(matchsticks == null || matchsticks.length == 0)
+           return false;
+        int sum = Arrays.stream(matchsticks).sum();  
+        int maxLen = Arrays.stream(matchsticks).max().getAsInt();
+        int expectedSide = sum/4;
+        if(sum % 4 != 0 || maxLen > expectedSide)
+           return false;
+        Arrays.sort(matchsticks);
+        int[] sides = new int[4];
+        return makesquareHelper(matchsticks, matchsticks.length-1, expectedSide, sides);
+    }
+    private boolean makesquareHelper(int[] matchsticks, int n, int expectedSide, int[] sides){
+        if(n < 0)
+           return true;
+        if(matchsticks[n] > expectedSide)
+           return false;
+        for(int i=0; i < 4; i++){
+            sides[i] +=  matchsticks[n];
+            if(sides[i] <= expectedSide && makesquareHelper(matchsticks, n-1, expectedSide, sides))
+               return true;
+            sides[i] -= matchsticks[n];
+        }
+        return false;
+    }
+}
+
+Time : O(4^n)
+Space : O(n) recursion depth
