@@ -1,0 +1,38 @@
+class Solution {
+    public void moveZeroes(int[] nums) {
+        for(int i=0; i < nums.length; i++){
+            if(nums[i] == 0){
+               int j = i;
+               while(j < nums.length && nums[j] == 0) {
+                   j++;
+               }
+               if(j < nums.length)
+                    swap(nums, i, j);
+            }
+        }
+    }
+    public void swap(int[] nums, int i, int j){
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+
+Optimized:
+
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int lastNonZeroIndex = 0;
+        for(int i=0; i < nums.length; i++){
+            if(nums[i] != 0){
+                swap(i, lastNonZeroIndex, nums);
+                lastNonZeroIndex++;
+            }
+        }
+    }
+    private void swap(int i, int lastNonZeroIndex, int[] nums){
+        int temp = nums[i];
+        nums[i] = nums[lastNonZeroIndex];
+        nums[lastNonZeroIndex] = temp;
+    }
+}
