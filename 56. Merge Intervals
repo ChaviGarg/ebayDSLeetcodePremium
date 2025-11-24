@@ -1,0 +1,25 @@
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        List<int[]> intervalList = new ArrayList<>();
+        Arrays.sort(intervals, (a,b) -> a[0]-b[0]);
+        int start = intervals[0][0], end = intervals[0][1];
+        for(int i=1; i < intervals.length; i++){
+            int nextStart =  intervals[i][0];
+            int nextEnd =  intervals[i][1];
+            if(nextStart <= end){
+                end = Math.max(end, nextEnd);
+            }
+            else{
+                intervalList.add(new int[]{start, end});
+                start = nextStart;
+                end = nextEnd;
+            }
+            
+        }
+        intervalList.add(new int[]{start, end});
+        return intervalList.toArray(new int[0][]);
+    }
+}
+
+Time : O(n log n) + O(n)
+Space : O(n) {Additional stace for result list and sorting takes O(n) space in worst case -> creates temp array and recursion stack space)
