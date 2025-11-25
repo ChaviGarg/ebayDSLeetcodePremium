@@ -1,0 +1,25 @@
+class Solution {
+    public List<String> findItinerary(List<List<String>> tickets) {
+        List<String> itinerary = new ArrayList<>();
+        Map<String, PriorityQueue<String>> adjMap = new HashMap<>();
+        for(List<String> ticket : tickets){
+            adjMap.computeIfAbsent(ticket.get(0), k -> new PriorityQueue<>());
+            adjMap.get(ticket.get(0)).offer(ticket.get(1));
+        }
+        dfs(adjMap, itinerary, "JFK");
+        Collections.reverse(itinerary);
+        return itinerary;
+    }
+    private void dfs(Map<String, PriorityQueue<String>> adjMap, List<String> itinerary, String source){
+        while(adjMap.containsKey(source) && ! adjMap.get(source).isEmpty()){
+            dfs(adjMap, itinerary, adjMap.get(source).poll());
+        }
+        itinerary.add(source);
+    }
+}
+
+Time : O(E log E)  :
+For every edge, pq will sort neighboring edges O(E log E)
+dfs -> poll takes O(log E) and this will heppend for every edge
+O(E log E)
+Space : O(V + E)
