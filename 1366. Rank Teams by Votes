@@ -1,0 +1,45 @@
+class Solution {
+    public String rankTeams(String[] votes) {
+        Map<Character, int[]> rankMap = new HashMap<>();
+        int n = votes[0].length();
+        for(String vote : votes){
+            for(int i=0; i < vote.length(); i++){
+                char team = vote.charAt(i);
+                rankMap.computeIfAbsent(team, k -> new int[n]);
+                rankMap.get(team)[i]++;
+            }
+        }
+        List<Character> teams = new ArrayList<>(rankMap.keySet());
+        Collections.sort(teams, (a,b) -> {
+            int[] array1 = rankMap.get(a);
+            int[] array2 = rankMap.get(b);
+            for(int i=0; i < n; i++){
+                if(array1[i] != array2[i])
+                   return array2[i] - array1[i];
+            }
+            return a-b; 
+        });
+        StringBuilder sb = new StringBuilder();
+        for(Character c : teams){
+            sb.append(c);
+        }
+        return String.valueOf(sb);
+    }
+}
+
+time : O(votes * teams) + O(teams * log teams)
+since team will be max from A to z 26 chars 
+so it will be constant
+total time : O(votes)
+
+Space : 
+rankMap stores votes in a T × T matrix
+Each team stores an int[T] frequency array.
+Worst case 26 teams × 26 positions:
+O(T²) → constant max = 26×26 = 676 ints → negligible.
+Other space
+teams list = T → O(T)
+Output string = T → O(T)
+So total:
+⭐ Space: O(T²) ≈ O(1) constant upper bound
+Since T ≤ 26, this is constant space.
