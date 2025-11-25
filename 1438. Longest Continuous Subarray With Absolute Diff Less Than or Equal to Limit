@@ -1,0 +1,49 @@
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        Deque<Integer> maxQueue = new LinkedList<>();
+        Deque<Integer> minQueue = new LinkedList<>();
+        int i=0, j=0, n = nums.length;
+        int max = 0;
+        while(j < n){
+            while(! maxQueue.isEmpty() && nums[j] > maxQueue.getLast()){
+                maxQueue.removeLast();
+            }
+            maxQueue.addLast(nums[j]);
+            while(! minQueue.isEmpty() && nums[j] < minQueue.getLast()){
+                minQueue.removeLast();
+            }
+            minQueue.addLast(nums[j]);
+            int diff = getDiff(maxQueue, minQueue);
+            if(diff <= limit){
+                max = Math.max(max, j-i+1);
+                j++;
+            }else{
+                while(i < nums.length && diff > limit){
+                    if(! maxQueue.isEmpty() && maxQueue.peek() == nums[i]){
+                        maxQueue.removeFirst();
+                    }
+                    if(! minQueue.isEmpty() && minQueue.peek() == nums[i]){
+                        minQueue.removeFirst();
+                    }
+                    i++;
+                    diff = getDiff(maxQueue, minQueue);
+                }
+                max = Math.max(max, j-i+1);
+                j++;
+            }
+        }
+        return max;
+        
+    }
+    private int getDiff(Deque<Integer> maxQueue, Deque<Integer> minQueue){
+        int maxPeek = 0, minPeek = 0;
+        if(! maxQueue.isEmpty())
+            maxPeek = maxQueue.peek();
+        if(! minQueue.isEmpty())
+            minPeek = minQueue.peek();
+        return maxPeek - minPeek;
+    }
+}
+
+// time : O(n)   (each element pushed and popped exactly once)
+// SPace : O(n)
